@@ -7,4 +7,4 @@ flask
 humanfriendly
 humanize
 gradio
-
+pandas

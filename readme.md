@@ -39,6 +39,11 @@ Alternatively, add this alias to your `.bash_profile`:
 alias slurm_gpustat=‘python ~/slurm_web/slurm_gpustat.py’
 ```
 
+To view the statistics of only the available resources, run:
+```
+python available_resources.py 
+```
+
 ## Credits
 This project is based on the original `slurm_gpustat` tool developed by [Samuel Albanie](https://github.com/albanie/slurm_gpustat) and `slurm_web
 ` developed by [Tengda Han](https://tengdahan.github.io/). It has been modified and maintained for the UVA Rivanna system by the UVA CV Lab, with the aim of providing enhanced monitoring tools for Rivanna.
