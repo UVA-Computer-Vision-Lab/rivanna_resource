@@ -11,8 +11,7 @@ This project extends the original implementation developed for the [Visual Geome
 ![Slurm Web Example](slurm_web_example.png)
 
 ## News
-- [Date]: Launched customized version for UVA Rivanna.
-- [Date]: Added features XYZ to enhance monitoring capabilities.
+- [10/31/2024]: Launched customized version for UVA Rivanna.
 
 ## Installation
 To install necessary dependencies, run:
