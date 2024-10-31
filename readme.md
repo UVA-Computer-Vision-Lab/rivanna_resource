@@ -4,7 +4,7 @@ A website-based resource monitor for [SLURM](https://slurm.schedmd.com/documenta
 This project extends the original implementation developed for the [Visual Geometry Group](https://www.robots.ox.ac.uk/~vgg/), Oxford, with enhancements and customizations to better serve the specific needs of our research group at the University of Virginia.
 
 ## Features
-- Parses the results from the `sinfo` command every X seconds to update CPU/GPU resource usage.
+- Parses the results from the `sinfo` command every 1 seconds to update CPU/GPU resource usage.
 - Hosts statistics on an internally accessible webpage, providing a convenient overview of system status.
 
 ## Screenshot
