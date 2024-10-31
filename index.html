@@ -71,7 +71,7 @@
 
         }
         function darkMode() {
-            var tables = ["resource","table_big", "terminal","disk_io"];
+            var tables = ["resource","table_big", "terminal","disk_io", "allocations"];
 
             for (var i = 0; i < tables.length; i++) {
                 var element = document.querySelectorAll("#"+tables[i]+" tbody tr:nth-child(even)");
@@ -120,6 +120,13 @@
 <details open>
     <summary style="cursor: pointer;font-size:1.5em;font-weight: bold;margin-block-start: 0.83em;margin-block-end: 0.83em;"> Disk I/O (measured by reading a 512MB file)</summary>
     <div class='table_big' id='disk_io'> </div>
+</details>
+<br>
+
+<hr>
+<details open>
+    <summary style="cursor: pointer;font-size:1.5em;font-weight: bold;margin-block-start: 0.83em;margin-block-end: 0.83em;"> Allocations for uva_cv_lab</summary>
+    <div class='table_big' id='allocations'> </div>
 </details>
 <br>
 
@@ -212,6 +219,18 @@
         fetch("{{ url_for('leaderboard_partition') }}")
         .then(response => {
                 response.text().then(t => {leaderboard_partition.innerHTML = t;darkMode();})
+            });
+        }, interval);
+
+    var allocations = document.getElementById("allocations");
+    fetch("{{ url_for('allocations') }}")
+        .then(response => {
+                response.text().then(t => {allocations.innerHTML = t;darkMode();})
+            });
+    setInterval(() => {
+        fetch("{{ url_for('allocations') }}")
+        .then(response => {
+                response.text().then(t => {allocations.innerHTML = t;darkMode();})
             });
         }, interval);
 
