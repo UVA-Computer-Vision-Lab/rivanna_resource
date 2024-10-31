@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8"/>
+    <title>Rivanna Monitor</title>
+</head>
+<script src=
+"https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.0/jquery.min.js">
+    </script>
+<header>
+    <h1>Rivanna Monitor: {{ hostname }}</h1>
+    <button style="float: right;" onclick="ToggleDarkFn()">Toggle Dark Mode</button>
+     
+    <script>
+        var dark_mode_enabled = localStorage.getItem('colorScheme');
+        console.log(dark_mode_enabled);
+        if (dark_mode_enabled == null){
+            dark_mode_enabled = false;
+            localStorage.setItem('colorScheme', dark_mode_enabled);
+        }
+        function darkModeChildren(element) {
+            for (var i = 0; i < element.length; i++) {
+                if (dark_mode_enabled === "true"){
+                    if (element[i].className == "progress"){
+                        element[i].style.backgroundColor = "transparent";
+                        element[i].style.color = "black";
+                    }
+                    else {
+                        element[i].style.backgroundColor = "black";
+                        element[i].style.color = "white";
+                    }
+                }
+
+                else {
+                    if (element[i].className == "progress"){
+                        element[i].style.backgroundColor = "transparent";
+                        element[i].style.color = "black";
+                    }
+                    else {
+                        element[i].style.backgroundColor = "#f5f5f5";
+                        element[i].style.color = "black";
+                    }
+                }
+            }
+        }
+
+        function checkColour(){
+            console.log(dark_mode_enabled);
+            if (dark_mode_enabled ==="true"){
+                var element = document.body;
+                element.classList.toggle("dark");
+                darkMode();
+            }
+        }
+
+        function ToggleDarkFn() {
+            var element = document.body;
+            element.classList.toggle("dark");
+            
+            if (dark_mode_enabled ==="true"){
+                dark_mode_enabled = "false";
+                localStorage.setItem('colorScheme', false);
+            }
+            else{
+                dark_mode_enabled = "true";
+                localStorage.setItem('colorScheme', true);
+            }
+
+            darkMode();
+
+        }
+        function darkMode() {
+            var tables = ["resource","table_big", "terminal","disk_io"];
+
+            for (var i = 0; i < tables.length; i++) {
+                var element = document.querySelectorAll("#"+tables[i]+" tbody tr:nth-child(even)");
+                darkModeChildren(element);
+            }
+
+            var a = document.querySelectorAll(".terminal");
+            darkModeChildren(a);
+
+            var b = document.querySelectorAll(".progress");
+            darkModeChildren(b);
+
+        }   
+    </script>
+    <h3><div id="clock"></div></h3>
+    <hr>
+</header>
+
+<body onload="checkColour()">
+
+
+<h2> Resource available:</h2>
+<div id="resource"> </div>
+<br>
+
+<!-- <hr>
+<h2> CPUs available:</h2>
+<div id="cpu_resource"> </div>
+<br> -->
+
+<hr>
+<details>
+    <summary style="cursor: pointer;font-size:1.5em;font-weight: bold;margin-block-start: 0.83em;margin-block-end: 0.83em;"> GPU Leaderboard</summary>
+<pre class='terminal' id="leaderboard"> </pre>
+</details>
+<br>
+
+<hr>
+<details open>
+    <summary style="cursor: pointer;font-size:1.5em;font-weight: bold;margin-block-start: 0.83em;margin-block-end: 0.83em;"> GPU Leaderboard by Partition</summary>
+<pre class='terminal' id="leaderboard_partition"> </pre>
+</details>
+<br>
+
+<hr>
+<details open>
+    <summary style="cursor: pointer;font-size:1.5em;font-weight: bold;margin-block-start: 0.83em;margin-block-end: 0.83em;"> Disk I/O (measured by reading a 512MB file)</summary>
+    <div class='table_big' id='disk_io'> </div>
+</details>
+<br>
+
+<hr>
+<details open>
+    <summary style="cursor: pointer;font-size:1.5em;font-weight: bold;margin-block-start: 0.83em;margin-block-end: 0.83em;"> Waiting Queue</summary>
+<pre class='terminal' id="queue"> </pre>
+</details>
+
+<br><br><br>
+</body>
+
+<footer>
+    <hr>
+    <p>Source code: <a href="https://github.com/UVA-Computer-Vision-Lab/rivanna_resource"
+        >https://github.com/TengdaHan/slurm_web</a>
+    <p>Contact: Xuweiyi Chen (xuweic@email.virginia.edu) </p>
+</footer>
+
+</html>
+
+<!-- Update content every {interval} ms -->
+<script>
+
+    var interval = 1000 * 15;
+    var clock = document.getElementById("clock");
+    fetch("{{ url_for('time_feed') }}")
+        .then(response => {
+                response.text().then(t => {clock.innerHTML = t;darkMode();})
+            });
+    setInterval(() => {
+        fetch("{{ url_for('time_feed') }}")
+        .then(response => {
+                response.text().then(t => {clock.innerHTML = t;darkMode();})
+            });
+        }, interval);
+
+    var disk_io = document.getElementById("disk_io");
+    fetch("{{ url_for('disk_io') }}")
+        .then(response => {
+                response.text().then(t => {disk_io.innerHTML = t;darkMode();})
+            });
+    setInterval(() => {
+        fetch("{{ url_for('disk_io') }}")
+        .then(response => {
+                response.text().then(t => {disk_io.innerHTML = t;darkMode();})
+            });
+        }, 1000 * 60 * 15);
+
+    var resource = document.getElementById("resource");
+    fetch("{{ url_for('resource') }}")
+        .then(response => {
+                response.text().then(t => {resource.innerHTML = t;darkMode();})});
+    setInterval(() => {
+        fetch("{{ url_for('resource') }}")
+        .then(response => {
+                response.text().then(t => {resource.innerHTML = t;darkMode();})});
+        }, interval);
+
+    var queue = document.getElementById("queue");
+    fetch("{{ url_for('queue') }}")
+        .then(response => {
+                response.text().then(t => {queue.innerHTML = t;darkMode();})
+            });
+    setInterval(() => {
+        fetch("{{ url_for('queue') }}")
+        .then(response => {
+                response.text().then(t => {queue.innerHTML = t;darkMode();})
+            });
+        }, interval);
+    
+    var leaderboard = document.getElementById("leaderboard");
+    fetch("{{ url_for('leaderboard') }}")
+        .then(response => {
+                response.text().then(t => {leaderboard.innerHTML = t;darkMode();})
+            });
+    setInterval(() => {
+        fetch("{{ url_for('leaderboard') }}")
+        .then(response => {
+                response.text().then(t => {leaderboard.innerHTML = t;darkMode();})
+            });
+        }, interval);
+
+    var leaderboard_partition = document.getElementById("leaderboard_partition");
+    fetch("{{ url_for('leaderboard_partition') }}")
+        .then(response => {
+                response.text().then(t => {leaderboard_partition.innerHTML = t;darkMode();})
+            });
+    setInterval(() => {
+        fetch("{{ url_for('leaderboard_partition') }}")
+        .then(response => {
+                response.text().then(t => {leaderboard_partition.innerHTML = t;darkMode();})
+            });
+        }, interval);
+
+</script>
+
+<!-- CSS -->
+<style>
+    body {
+    font-family: 'Helvetica', 'Arial', sans-serif;
+    max-width: 1200px;
+    margin: auto;
+    zoom: 75%;
+    }.dark{
+        background-color: #222;
+        color: #e6e6e6;
+    }
+
+    a {
+        color: #007bff;
+    }
+
+    pre.terminal {
+        color: #222;
+        background-color: #fafafa;
+    }
+
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }.dark{
+        background-color: #222;
+        color: #e6e6e6;
+    }
+
+    .table_big table {
+        border-collapse: collapse;
+        width: 62%;
+        font-size: 18px;
+    }.dark{
+        background-color: #222;
+        color: #e6e6e6;
+    }
+
+    th, td {
+        text-align: left;
+        padding: 8px;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f5f5f5;
+    }.dark{
+        background-color: #222;
+        color: #e6e6e6;
+    }
+
+    progress {
+        border-width: 1px;
+        /* border-color: #646464; */
+        outline: none;
+        border-radius: 3px; 
+        width: 100px;
+        height: 20px;
+        box-shadow: 1px 1px 4px rgba(128, 128, 128, 0.2);
+        margin-left: 5px;
+        background-color: rgb(216, 216, 216);
+        }
+        progress::-webkit-progress-bar {
+        background-color: rgb(216, 216, 216);
+        border-radius: 3px;
+        }
+
+        progress::-webkit-progress-value {
+        background-color: rgb(155, 224, 207);
+        border-radius: 3px;
+        }
+
+        progress::-moz-progress-bar {
+            background-color: rgb(155, 224, 207);
+            border-radius: 3px;
+        }
+
+    progress.long {
+        border-width: 1px;
+        outline: none;
+        /* border-color: #646464; */
+        border-radius: 3px; 
+        width: 200px;
+        height: 20px;
+        box-shadow: 1px 1px 4px rgba(128, 128, 128, 0.2);
+        margin-left: 5px;
+        }
+        progress::-webkit-progress-bar {
+        background-color: rgb(216, 216, 216);
+        border-radius: 3px;
+        }.dark{
+            background-color: #222;
+            /* color: #e6e6e6; */
+        }
+        progress::-webkit-progress-value {
+        background-color: rgb(155, 224, 207);
+        border-radius: 3px;
+        }.dark{
+            background-color: #222;
+            /* color: #e6e6e6; */
+        }
+
+    .progress:before {
+        content:attr(data-text);
+        position:absolute;
+        left:0;
+        right:0;
+        top:1px;
+    }
+    .progress {
+        text-align:center;
+        display:inline-block;
+        position:relative;
+    }
+
+    pre {
+        font-size: large;
+        background-color: #f5f5f5;
+    }
+
+    footer {
+        text-align: right;
+    }
+</style>

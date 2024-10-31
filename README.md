@@ -1,1 +1,0 @@
-# rivanna_resource
