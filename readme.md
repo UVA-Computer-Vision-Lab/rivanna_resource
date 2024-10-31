@@ -22,7 +22,7 @@ pip install -r requirements.txt
 ## Usage
 To launch the web monitor:
 ```
-python app.py –host localhost –port 8080
+python app.py --host localhost --port 8080
 ```
 Access the website at `localhost:8080`. Adjust the host and port as needed for your setup.
 
