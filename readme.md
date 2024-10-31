@@ -11,6 +11,7 @@ This project extends the original implementation developed for the [Visual Geome
 ![Slurm Web Example](slurm_web_example.png)
 
 ## News
+- [10/31/2024]: Add allocations.
 - [10/31/2024]: Launched customized version for UVA Rivanna.
 
 ## Installation
