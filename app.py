@@ -616,7 +616,7 @@ def main():
     @app.route("/time_feed")
     def time_feed():
         def generate():
-            yield f'updated at: {datetime.now(pytz.timezone("Europe/London")).strftime("%Y.%m.%d | %H:%M:%S")}'
+            yield f'updated at: {datetime.now(pytz.timezone("America/New_York")).strftime("%Y.%m.%d | %H:%M:%S")}'
 
         return Response(generate(), mimetype="text")
 

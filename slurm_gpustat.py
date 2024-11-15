@@ -431,11 +431,19 @@ def occupancy_stats_for_node(node: str) -> dict:
             # like 68G/257669M, rather than 68G/258G. The humanfriendly library provides
             # a more reliable number parser, and the humanize library provides a nice
             # formatter.
-            alloc_val = humanize.naturalsize(hf.parse_size(alloc_val), format="%d")
-            cfg_val = humanize.naturalsize(hf.parse_size(cfg_val), format="%d")
+            alloc_val = format_size(hf.parse_size(alloc_val,binary=True))
+            cfg_val = format_size(hf.parse_size(cfg_val,binary=True))
         occupancy[metric] = f"{alloc_val}/{cfg_val}"
     return occupancy
 
+def format_size(size_in_bytes):
+    size_in_gb = size_in_bytes / (1024 ** 3)  
+    if size_in_gb < 1024: 
+        return f"{int(size_in_gb)} G"
+    else:
+        size_in_tb = size_in_gb / 1024
+        formatted_tb = f"{size_in_tb:.1f}".rstrip('0').rstrip('.')
+        return f"{formatted_tb} T"
 
 def lru_cache_time(seconds, maxsize=None):
     """
@@ -498,9 +506,8 @@ def avail_stats_for_node(node: str) -> dict:
             # like 68G/257669M, rather than 68G/258G. The humanfriendly library provides
             # a more reliable number parser, and the humanize library provides a nice
             # formatter.
-            avail_val = humanize.naturalsize(hf.parse_size(cfg_val) - hf.parse_size(alloc_val), 
-                                             format="%d")
-            cfg_val = humanize.naturalsize(hf.parse_size(cfg_val), format="%d")
+            avail_val = format_size(hf.parse_size(cfg_val,binary=True) - hf.parse_size(alloc_val,binary=True))
+            cfg_val = format_size(hf.parse_size(cfg_val,binary=True))
             occupancy[metric] = f"{avail_val} / {cfg_val}"
         else:
             occupancy[metric] = f"{hf.parse_size(cfg_val)-hf.parse_size(alloc_val)} / {hf.parse_size(cfg_val)}"
@@ -608,7 +615,7 @@ def summary(mode: str, resources: dict = None, states: dict = None):
 
 
 @beartype
-def gpu_usage(resources: dict, partition: Optional[str] = None) -> dict:
+def gpu_usage(resources: dict, partition: Optional[str] = "gpu-a40,gpu-v100,gpu-a100-80,gpu-a100-40,gpu-a6000,interactive-rtx3090,interactive-rtx2080") -> dict:
     """Build a data structure of the cluster resource usage, organised by user.
 
     Args:
