@@ -434,7 +434,7 @@ def parse_usage_to_table(show_bar=True):
 
 
 def parse_queue_to_table():
-    """Request pending queue for uva_cv_lab and uva_cv_lab2 accounts, returning combined output with raw formatting."""
+    """Request pending queue for uva_cv_lab, uva_cv_lab2, and dac_cheng accounts, returning combined output with raw formatting."""
 
     # Command templates to fetch pending jobs for uva_cv_lab and uva_cv_lab2 accounts
     cmd_uva_cv_lab = (
@@ -443,13 +443,17 @@ def parse_queue_to_table():
     cmd_uva_cv_lab2 = (
         "squeue -t PENDING -A uva_cv_lab2 -o '%.18i %.9P %.8u %.8T %.10M %.9l %.6D %R'"
     )
+    cmd_dac_cheng = (
+        "squeue -t PENDING -A dac_cheng -o '%.18i %.9P %.8u %.8T %.10M %.9l %.6D %R'"
+    )
 
     # Fetch and combine outputs
     out_uva_cv_lab = parse_cmd(cmd_uva_cv_lab)
     out_uva_cv_lab2 = parse_cmd(cmd_uva_cv_lab2)
+    out_dac_cheng = parse_cmd(cmd_dac_cheng)
 
-    # Combine both queues and format output as a single string
-    combined_output = "\n".join(out_uva_cv_lab + out_uva_cv_lab2)
+    # Combine all queues and format output as a single string
+    combined_output = "\n".join(out_uva_cv_lab + out_uva_cv_lab2 + out_dac_cheng)
 
     return combined_output
 
